@@ -1,0 +1,60 @@
+---
+title: "Belen Rugerio"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(dplyr)
+library(fivethirtyeight)
+# For reading CSV spreadsheet files:
+library(readr)
+```
+
+## Fall 2021
+
+My first semester of senior year I took **SDS 192: Introduction to Data Science**. Over the course of the semester we learned about many topics, from data wrangling to data visualization. The following is an overview of the coursework I completed for the class. 
+
+## Data Wrangling
+
+The following is a data wrangling exercise using data from the Titanic about survivors. 
+
+
+This code downloads ths csv file and wrangles the data to display a table showing the count of surivors and the numer of desceased. 
+```{r }
+titanic <- read_csv("https://rudeboybert.github.io/SDS192/static/PS/titanic.csv")
+
+survival <- titanic %>% group_by(Survived) %>%  count(Survived)
+survival <- rename(survival, Count=n) 
+survival
+```
+Now that dataframe is further grouped by sex to differentiate the survivors by gender assigned at birth. 
+```{r}
+survival_by_sex <- titanic %>% group_by(Sex) %>% count(Survived) 
+survival_by_sex <- rename(survival_by_sex, Count=n)  
+survival_by_sex
+```
+
+
+## Data Visualization
+
+The following is a barplot showing the campaign stops for the 2016 presidential candidates from September to Noveber, obtained from the package fivethirtyeight. 
+
+```{r pressure, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+library(fivethirtyeight)
+library(moderndive)
+library(lubridate)
+
+weekly_campaign_stops <- pres_2016_trail %>% 
+  mutate(week = floor_date(date, unit = "week")) %>% group_by(candidate, week) %>% 
+  summarize(number_of_stops = n())
+
+ggplot(data = weekly_campaign_stops, mapping = aes(x = week, y = number_of_stops, fill = candidate)) +
+  geom_col()+ facet_wrap(~ candidate, ncol = 1)+ggtitle("Weekly Campaign Stops in 2016") +
+  xlab("Week") + ylab("Number of stops")+theme(legend.position="bottom")
+```
+
